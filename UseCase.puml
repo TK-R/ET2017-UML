@@ -1,0 +1,54 @@
+'信号 -- 電圧/パルス/ON-OFF'
+'電文 -- バイトデータの羅列'
+
+@startuml
+title << ユースケース図 >>
+
+left to right direction
+
+actor   チームメンバー
+entity  走行ログ
+
+package ロボット {
+    boundary    Bluetooth_Robo
+    boundary    タッチスイッチ
+    boundary    入力端子_Robo
+    boundary    出力端子_Robo
+
+    タッチスイッチ -> 入力端子_Robo : センサ信号
+}
+
+package モニタツール{
+    boundary    Bluetooth_Mon
+    boundary    描画ソフトウェア    
+
+    描画ソフトウェア <-> Bluetooth_Mon : 仮想シリアル通信
+}
+
+package シミュレータツール{
+    boundary    シミュレータソフトウェア
+    boundary    USB_SIM
+    シミュレータソフトウェア <--> USB_SIM : 仮想シリアル通信
+}
+
+package HILSボード{
+    boundary    入力端子_Board
+    boundary    出力端子_Board
+    boundary    USB_Board
+}
+
+'シミュレータ関連'
+USB_SIM --> USB_Board : 入力信号電文
+USB_SIM <-- USB_Board : 出力信号電文
+入力端子_Board <- 出力端子_Robo : モータ出力信号
+出力端子_Board -> 入力端子_Robo : センサ入力信号
+チームメンバー -> シミュレータソフトウェア : 状態確認
+
+チームメンバー -> タッチスイッチ : 走行開始操作
+チームメンバー -> 描画ソフトウェア : 状態確認
+チームメンバー -> 描画ソフトウェア : 状態操作
+描画ソフトウェア -> 走行ログ : 出力
+
+Bluetooth_Robo -> Bluetooth_Mon : 入力信号電文+出力信号電文
+
+@enduml
