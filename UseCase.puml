@@ -4,7 +4,7 @@
 @startuml
 title << ユースケース図 >>
 
-left to right direction
+'left to right direction
 
 actor   チームメンバー
 entity  走行ログ
@@ -50,5 +50,6 @@ USB_SIM <-- USB_Board : 出力信号電文
 描画ソフトウェア -> 走行ログ : 出力
 
 Bluetooth_Robo -> Bluetooth_Mon : 入力信号電文+出力信号電文
+Bluetooth_Robo -> Bluetooth_Mon : アプリケーション電文
 
 @enduml
