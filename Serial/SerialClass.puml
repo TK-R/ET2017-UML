@@ -1,0 +1,54 @@
+@startuml
+
+title クラス図
+
+Class SerialManager {
+	-void Receive(byte data)
+	+bool WriteData<StructT>(StructT dataStruct)
+	+bool ReadData(out OutputSignalData output)
+	+bool ReadData(out InputSignalData output)
+	-object LockObject
+	-InputSignalData RecentInputData
+	-OutputSignalData RecentOutputData
+}
+
+Class State {
+	+void Receive(byte data)
+}
+
+
+Class HeaderState {
+	+void Receive(byte data)
+}
+
+Class HeaderDataState{
+	+void Receive(byte data)
+	-byte[] buff
+}
+
+Class DataState{
+	+void Receive(byte data)
+	-byte[] buff
+}
+
+Class InputDataState {
+	+void Receive(byte data)
+	-byte[] buff
+}
+
+Class OutputDataState {
+	+void Receive(byte data)
+	-byte[] buff
+}
+
+SerialManager "1" -> "1" State
+
+State <|-- HeaderState
+State <|-- HeaderDataState
+State <|-- DataState
+
+DataState <|-- InputDataState
+DataState <|-- OutputDataState
+
+
+@enduml
