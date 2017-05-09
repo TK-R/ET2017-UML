@@ -8,14 +8,17 @@ Class SerialManager {
 	+bool ReadData(out OutputSignalData output)
 	+bool ReadData(out InputSignalData output)
 	-object LockObject
-	-InputSignalData RecentInputData
-	-OutputSignalData RecentOutputData
+	-InputSignalData RecentInputSignal
+	-OutputSignalData RecentOutputSignal
 }
 
-Class State {
+
+Class SerialState {
+	
 	+void Receive(byte data)
-}
+	-byte[] buff
 
+}
 
 Class HeaderState {
 	+void Receive(byte data)
@@ -23,32 +26,25 @@ Class HeaderState {
 
 Class HeaderDataState{
 	+void Receive(byte data)
-	-byte[] buff
-}
-
-Class DataState{
-	+void Receive(byte data)
-	-byte[] buff
 }
 
 Class InputDataState {
 	+void Receive(byte data)
-	-byte[] buff
 }
 
 Class OutputDataState {
-	+void Receive(byte data)
-	-byte[] buff
+	+void Receive(byte data)}
 }
 
-SerialManager "1" -> "1" State
 
-State <|-- HeaderState
-State <|-- HeaderDataState
-State <|-- DataState
+SerialManager "1" -> "1" SerialState
+SerialManager "1" <- "1" SerialState
 
-DataState <|-- InputDataState
-DataState <|-- OutputDataState
+
+SerialState <|-- HeaderState
+SerialState <|-- HeaderDataState
+SerialState <|-- InputDataState
+SerialState <|-- OutputDataState
 
 
 @enduml
