@@ -1,0 +1,19 @@
+
+
+@startuml
+title << ユースケース図 >>
+
+left to right direction
+
+actor   競技者
+
+package システム {
+	usecase		スピード競技を攻略する
+	usecase		ブロック区間を攻略する
+}
+
+競技者 -> スピード競技を攻略する
+競技者 -> ブロック区間を攻略する
+
+
+@enduml
