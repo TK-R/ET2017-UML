@@ -1,0 +1,26 @@
+@startuml
+title ブロック並べのシーケンス　
+hide footbox
+
+actor 審判
+actor 競技者
+
+審判 -> 競技者 : 初期位置コードの通知
+競技者 -> Bluetooth通信装置 : 初期位置コードの入力
+activate Bluetooth通信装置
+競技者 <-- Bluetooth通信装置 : 初期配置と解法の表示
+deactivate Bluetooth通信装置
+Bluetooth通信装置 -> 走行体 : ブロック運搬ルール送信
+activate 走行体 
+Bluetooth通信装置 <-- 走行体 : ブロック運搬ルール応答
+deactivate 走行体
+競技者 <- Bluetooth通信装置 : ブロック運搬ルール送信完了表示
+
+... 走行開始 ...
+
+loop 図形作成
+走行体 -> 走行体 : ブロック運搬ルール読込
+走行体 -> ブロック : ブロック運搬
+end
+
+@enduml
