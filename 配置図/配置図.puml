@@ -1,0 +1,34 @@
+@startuml
+title システム配置図 (PlantUMLには存在しないため、コンポーネント図で代用)
+
+package 走行体   {
+    boundary    入力端子
+    boundary    出力端子
+	[走行体プログラム]
+}
+
+package Bluetooth通信機器{
+	[モニタツール]  
+}
+
+package シミュレータシステム {
+	package シミュレータPC{
+	    [シミュレータソフトウェア]
+	}
+
+	package HILSボード（FPGA+周辺回路）as hils{
+		[HILSソフトウェア]
+		boundary    センサ模擬端子
+		boundary    モータ模擬端子
+	}
+}
+
+センサ模擬端子 -u-> 入力端子 : <<センサ信号>>
+モータ模擬端子 --> 出力端子 : <<回転パルス信号>>
+出力端子 --> モータ模擬端子 : <<PWM信号>>
+
+走行体 <--> Bluetooth通信機器 : <<Bluetooth>>
+
+hils <--> シミュレータPC : <<USB>>
+
+@end
