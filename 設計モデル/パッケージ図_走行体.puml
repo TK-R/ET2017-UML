@@ -1,0 +1,27 @@
+@startuml
+
+title 走行体のパッケージ構成
+
+package Bluetooth通信{
+
+}
+
+package 競技戦略 {
+}
+
+
+package ブロック並べ解法 {
+}
+
+
+package 走行体情報 {
+}
+
+Bluetooth通信 ..> 走行体情報  : 走行体情報取得
+Bluetooth通信 <.. ブロック並べ解法 : 運搬経路の取得
+競技戦略 ..> 走行体情報 : 入力情報取得/出力情報更新
+
+競技戦略 ..> ブロック並べ解法 : 運搬経路の取得
+
+
+@enduml
