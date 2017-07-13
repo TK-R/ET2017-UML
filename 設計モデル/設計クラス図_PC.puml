@@ -48,15 +48,22 @@ package Bluetooth通信{
         PIDパラメータ送信()
     }
     
-    class PIDパラメータ{
+
+}
+
+package ライントレースパラメータ {
+    class PIDパラメータ {
         Pゲイン
         Iゲイン
         Dゲイン
+        走行距離
     }
 
-    Bluetooth通信管理 "1" --> "1..*" PIDパラメータ
 
 }
+
+Bluetooth通信管理 "1" --> "1..*" PIDパラメータ
+
 
 Bluetooth通信管理 "1"--> "1..*" ブロック並べコマンド
 
