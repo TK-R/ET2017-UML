@@ -2,48 +2,96 @@
 title スピード競技中のシーケンス図
 hide footbox
 
-戦略管理 -> 入力信号情報 : センサ情報更新()
-	activate 入力信号情報
-	戦略管理 <-- 入力信号情報 
-	deactivate 入力信号情報
+participant "戦略管理" as StManager
+participant "入力信号情報" as Input
+participant "出力信号情報" as Output
+participant "ライントレース戦略" as Linetrace
+participant "ブロック並べ戦略" as block
 
-戦略管理 -> 入力信号情報 : 左モータ角度取得()
-	activate 入力信号情報
-	戦略管理 <-- 入力信号情報 
-	deactivate 入力信号情報
+activate StManager
+StManager -> Input : センサ情報更新()
+	activate Input
+	StManager <-- Input 
+	deactivate Input
 
-戦略管理 -> 入力信号情報 : 右モータ角度取得()
-	activate 入力信号情報
-	戦略管理 <-- 入力信号情報 
-	deactivate 入力信号情報
+StManager -> Input : 左モータ角度取得()
+	activate Input
+	StManager <-- Input 
+	deactivate Input
 
-戦略管理 -> 自己位置推定器 : 走行体位置更新(左モータ角度, 右モータ角度)
+StManager -> Input : 右モータ角度取得()
+	activate Input
+	StManager <-- Input 
+	deactivate Input
+
+StManager -> 自己位置推定器 : 走行体位置更新(左モータ角度, 右モータ角度)
 	activate 自己位置推定器
-	戦略管理 <-- 自己位置推定器
+	StManager <-- 自己位置推定器
 	deactivate 自己位置推定器
 
-戦略管理 -> ライントレース戦略: 戦略実行()
-	activate ライントレース戦略
-	戦略管理 <-- ライントレース戦略
-
-	ライントレース戦略 -> 自己位置推定器 : 走行体位置取得()
+StManager -> Linetrace: 戦略実行()
+	activate Linetrace
+	Linetrace -> 自己位置推定器 : 走行体座標取得()
 		activate 自己位置推定器
-		ライントレース戦略 <-- 自己位置推定器
+		Linetrace <-- 自己位置推定器
 		deactivate 自己位置推定器
 
-	ライントレース戦略 -> ライントレース戦略: 該当する区間のPIDパラメータ取得()
-	ライントレース戦略 -> ライントレース戦略: モータ出力値計算()
+	Linetrace -> Input: カラーセンサ情報取得()
+		activate Input
+		Linetrace <-- Input
+		deactivate Input
 
-	ライントレース戦略 -> 出力信号情報: モータ出力値設定()
-		activate 出力信号情報
-		ライントレース戦略 <-- 出力信号情報	
-		deactivate 出力信号情報
-	deactivate ライントレース戦略
 
-戦略管理 -> 出力信号情報 : モータ情報出力
-	activate 出力信号情報
-	戦略管理 <-- 出力信号情報
-	deactivate 出力信号情報
+	Linetrace -> Linetrace : 戦略切替判定()
+		activate Linetrace
+		deactivate Linetrace
+
+	alt 戦略切替要
+
+		Linetrace -> StManager : 戦略切替(ブロック並べ戦略)
+			activate StManager
+			
+			create block
+			StManager -> block : 生成()
+
+			Linetrace <-- StManager
+			deactivate StManager
+	 	
+		StManager <-- Linetrace
+		deactivate Linetrace
+	
+	StManager -> block : 戦略実行()
+		activate block 
+		StManager <-- block
+		note right :別シーケンスで表現
+		deactivate block
+
+
+	else 戦略切替不要
+		activate Linetrace
+		Linetrace -> Linetrace: PIDパラメータ取得(走行体座標)
+			activate Linetrace
+			deactivate Linetrace
+
+		Linetrace -> Linetrace: モータ出力値計算()
+			activate Linetrace
+			deactivate Linetrace
+
+		Linetrace -> Output: モータ出力値設定()
+			activate Output
+			Linetrace <-- Output	
+			deactivate Output
+
+		StManager <-- Linetrace
+	end
+
+	
+	deactivate Linetrace
+
+StManager -> Output : モータ情報出力
+	activate Output
+	StManager <-- Output
+	deactivate Output
 
 
 @enduml

@@ -1,24 +1,81 @@
 @startuml
-title ブロック並べのシーケンス　
+
 hide footbox
+title ブロック並べシーケンス
 
-actor 審判
-actor 競技者
+participant "戦略管理" as StManager
+participant "ブロック並べ戦略" as block
+participant "自己位置推定器" as selfPostion
+participant "ブロック運搬ルール" as rule
+participant "ブロック運搬コマンド" as command
+participant "ブロック並べ状態" as state
+participant "出力信号情報" as Output
 
-審判 -> 競技者 : 初期位置コードの通知
-競技者 -> Bluetooth通信装置 : 初期位置コードと緑ブロック位置の入力
-activate Bluetooth通信装置
-競技者 <-- Bluetooth通信装置 : 初期配置と解法の表示
-deactivate Bluetooth通信装置
 
-競技者 -> Bluetooth通信装置 : ブロック運搬ルール送信操作
-	activate Bluetooth通信装置
-	Bluetooth通信装置 -> 走行体 : ブロック運搬ルール送信
-		activate 走行体 
-		Bluetooth通信装置 <-- 走行体
-		deactivate 走行体
-	競技者 <- Bluetooth通信装置 : ブロック運搬ルール送信完了表示
-	deactivate Bluetooth通信装置
+activate StManager 
+StManager -> block : 戦略実行()
+	activate block
+	block -> selfPostion :走行体座標取得()
+		activate selfPostion
+		block <-- selfPostion
+		deactivate selfPostion
+
+	block -> block : 目標座標到達判定()
+		activate block
+		deactivate block
+
+
+	alt 目標座標到達 or 初回移動
+	block -> rule : 目標座標到達()
+		activate rule
+		rule -> command : 目標座標到達()
+			activate command
+			command -> command : 経路削除()
+				activate command
+				deactivate command
+
+			rule <-- command
+			deactivate command
+
+		block <-- rule
+		deactivate rule
+
+
+	block -> rule : 次回目標座標取得()
+		activate rule
+		rule -> command : 次回目標座標取得()
+			activate command
+			rule <- command
+			deactivate command
+
+		block <-- rule
+		deactivate rule
+
+
+	block -> block : 目標座標更新
+		activate block
+		deactivate block
+	end
+
+	block -> selfPostion :走行体角度取得()
+		activate selfPostion
+		block -> selfPostion
+		deactivate selfPostion
+
+	block -> state : モータ出力値計算()
+		activate state
+		note right : [ステートマシン処理]
+		block <-- state 
+		deactivate state
+
+	block -> Output: モータ出力値設定()
+		activate Output
+		block <-- Output	
+		deactivate Output
+
+
+	StManager <-- block 
+	deactivate block
 
 
 @enduml
