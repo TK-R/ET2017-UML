@@ -1,0 +1,37 @@
+@startuml
+
+hide footbox
+title 縦列駐車シーケンス図
+
+participant "戦略管理" as StManager
+participant "縦列駐車戦略" as park
+participant "縦列駐車状態" as state
+participant "自己位置推定器" as selfPostion
+participant "出力信号情報" as Output
+
+
+activate StManager 
+StManager -> park : 戦略実行()
+	activate park
+	park -> selfPostion :走行体座標取得()
+		activate selfPostion
+		park <-- selfPostion
+		deactivate selfPostion
+
+	park -> state : モータ出力値計算()
+		activate state
+		note right : [ステートマシン処理]
+		park <-- state 
+		deactivate state
+
+	park -> Output: モータ出力値設定()
+		activate Output
+		park <-- Output	
+		deactivate Output
+
+
+	StManager <-- park 
+	deactivate park
+
+
+@enduml

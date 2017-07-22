@@ -9,7 +9,7 @@ participant "ライントレース戦略" as Linetrace
 participant "ブロック並べ戦略" as block
 
 activate StManager
-StManager -> Input : センサ情報更新()
+StManager -> Input : センサ情報入力()
 	activate Input
 	StManager <-- Input 
 	deactivate Input
@@ -46,14 +46,13 @@ StManager -> Linetrace: 戦略実行()
 		activate Linetrace
 		deactivate Linetrace
 
-	alt 戦略切替要
+		note right: ブロック並べエリア周辺に到達しているか
 
+	alt 戦略切替要
 		Linetrace -> StManager : 戦略切替(ブロック並べ戦略)
 			activate StManager
-			
 			create block
 			StManager -> block : 生成()
-
 			Linetrace <-- StManager
 			deactivate StManager
 	 	
@@ -88,7 +87,7 @@ StManager -> Linetrace: 戦略実行()
 	
 	deactivate Linetrace
 
-StManager -> Output : モータ情報出力
+StManager -> Output : モータ情報出力()
 	activate Output
 	StManager <-- Output
 	deactivate Output

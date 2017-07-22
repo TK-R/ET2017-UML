@@ -9,6 +9,8 @@ participant "自己位置推定器" as selfPostion
 participant "ブロック運搬ルール" as rule
 participant "ブロック運搬コマンド" as command
 participant "ブロック並べ状態" as state
+participant "縦列駐車戦略" as park
+
 participant "出力信号情報" as Output
 
 
@@ -25,7 +27,7 @@ StManager -> block : 戦略実行()
 		deactivate block
 
 
-	alt 目標座標到達 or 初回移動
+	opt 目標座標到達
 	block -> rule : 目標座標到達()
 		activate rule
 		rule -> command : 目標座標到達()
@@ -39,7 +41,7 @@ StManager -> block : 戦略実行()
 
 		block <-- rule
 		deactivate rule
-
+	end
 
 	block -> rule : 次回目標座標取得()
 		activate rule
@@ -50,13 +52,35 @@ StManager -> block : 戦略実行()
 
 		block <-- rule
 		deactivate rule
+	
 
-
-	block -> block : 目標座標更新
+	block -> block : 戦略切替判定()
 		activate block
 		deactivate block
-	end
+		
+	
+	alt 戦略切替要 		
+		note right:全ての運搬コマンドが終了しているか
+		block -> StManager : 戦略切替(縦列駐車戦略)
+			activate StManager
+			
+			create park
+			StManager -> park : 生成()
 
+			block <-- StManager
+			deactivate StManager
+	 	
+		StManager <-- block
+		deactivate block
+
+		StManager -> park : 戦略実行()
+		activate park 
+		StManager <-- park
+		note right :別シーケンスで表現
+		deactivate park
+	else 戦略切替不要
+	
+	activate block
 	block -> selfPostion :走行体角度取得()
 		activate selfPostion
 		block -> selfPostion
@@ -72,6 +96,7 @@ StManager -> block : 戦略実行()
 		activate Output
 		block <-- Output	
 		deactivate Output
+	end
 
 
 	StManager <-- block 

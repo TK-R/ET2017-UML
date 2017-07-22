@@ -1,5 +1,5 @@
 @startuml
-title ブロック並べのシーケンス　
+title ブロック運搬ルール送信シーケンス図
 hide footbox
 
 actor 審判
